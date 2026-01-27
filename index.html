@@ -89,6 +89,7 @@
   <h1>Block Builder</h1>
   <p class="info">Left-click to place blocks • Right-click to remove</p>
   <button onclick="resetWorld()">Reset World</button>
+  <button onclick="exitGame()">EXIT SYSTEM</button>
   <br><br>
   <canvas id="game" width="600" height="400"></canvas>
 </div>
@@ -97,6 +98,9 @@
   function enterGame() {
     document.getElementById('intro').classList.remove('active');
     document.getElementById('gameScreen').classList.add('active');
+  } function exitGame() {
+    document.getElementById('gameScreen').classList.remove('active');
+    document.getElementById('intro').classList.add('active');
   }
 
   const canvas = document.getElementById('game');
