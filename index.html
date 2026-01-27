@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>System Access</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ff00;
+      font-family: "Courier New", monospace;
+      text-align: center;
+    }
+
+    .screen {
+      display: none;
+      padding: 30px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .terminal {
+      max-width: 700px;
+      margin: 60px auto;
+      border: 2px solid #00ff00;
+      padding: 20px;
+      text-align: left;
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    .cursor {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      background: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    /* GAME STYLES */
+    #gameScreen {
+      background: #111;
+      color: white;
+      font-family: system-ui, sans-serif;
+    }
+
+    canvas {
+      background: #87ceeb;
+      border: 3px solid #222;
+      cursor: pointer;
+    }
+
+    .info {
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HACKER INTRO SCREEN -->
+<div id="intro" class="screen active">
+  <div class="terminal">
+    <p>> Initializing system...</p>
+    <p>> Establishing secure connection...</p>
+    <p>> Bypassing firewall...</p>
+    <p>> Decrypting access keys...</p>
+    <p>> Access granted.</p>
+    <p>> Welcome, George<span class="cursor">_</span></p>
+  </div>
+  <button onclick="enterGame()">ENTER SYSTEM</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen" class="screen">
+  <h1>Block Builder</h1>
+  <p class="info">Left-click to place blocks • Right-click to remove</p>
+  <button onclick="resetWorld()">Reset World</button>
+  <br><br>
+  <canvas id="game" width="600" height="400"></canvas>
+</div>
+
+<script>
+  function enterGame() {
+    document.getElementById('intro').classList.remove('active');
+    document.getElementById('gameScreen').classList.add('active');
+  }
+
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+
+  const TILE = 40;
+  const COLS = canvas.width / TILE;
+  const ROWS = canvas.height / TILE;
+
+  let world = [];
+
+  function createWorld() {
+    world = [];
+    for (let y = 0; y < ROWS; y++) {
+      let row = [];
+      for (let x = 0; x < COLS; x++) {
+        row.push(y > ROWS / 2 ? 'dirt' : null);
+      }
+      world.push(row);
+    }
+  }
+
+  function drawWorld() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        if (world[y][x] === 'dirt') {
+          ctx.fillStyle = '#8b4513';
+          ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+        }
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.strokeRect(x * TILE, y * TILE, TILE, TILE);
+      }
+    }
+  }
+
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left) / TILE);
+    const y = Math.floor((e.clientY - rect.top) / TILE);
+    world[y][x] = 'dirt';
+    drawWorld();
+  });
+
+  canvas.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left) / TILE);
+    const y = Math.floor((e.clientY - rect.top) / TILE);
+    world[y][x] = null;
+    drawWorld();
+  });
+
+  function resetWorld() {
+    createWorld();
+    drawWorld();
+  }
+
+  createWorld();
+  drawWorld();
+</script>
+
+</body>
+</html>
